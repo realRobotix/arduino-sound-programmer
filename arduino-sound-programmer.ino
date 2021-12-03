@@ -98,9 +98,15 @@ Note Notes[] = {
     {"D8", 4699},
     {"DS8", 4978}};
 
+const int pinUp = 8;
+const int pinLeft = 9;
+const int pinRight = 6;
+const int pinDown = 7;
+const int pinPlay = 10;
 const int melodyLength = 20;
 const int standardNote = 2;
 const int standardLength = 4;
+
 int currSelNote = 0;
 
 typedef struct
@@ -110,45 +116,51 @@ typedef struct
 } melody;
 
 melody Melody[melodyLength];
+/*
+const byte arrowLeft[8] = {
+  B01000,
+  B01100,
+  B01110,
+  B01111,
+  B01110,
+  B01100,
+  B01000,
+  B00000,
+};
 
-//const byte arrowLeft[8] = {
-//  B01000,
-//  B01100,
-//  B01110,
-//  B01111,
-//  B01110,
-//  B01100,
-//  B01000,
-//  B00000,
-//};
-//
-//const byte arrowRight[8] = {
-//  B01000,
-//  B01100,
-//  B01110,
-//  B01111,
-//  B01110,
-//  B01100,
-//  B01000,
-//  B00000,
-//};
-
+const byte arrowRight[8] = {
+  B01000,
+  B01100,
+  B01110,
+  B01111,
+  B01110,
+  B01100,
+  B01000,
+  B00000,
+};
+*/
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
- void setup()
+void setup()
 {
+  Serial.begin(2000000);
   for (int i = 0; i < melodyLength; i++)
   {
     Melody[i].note = standardNote;
     Melody[i].length = standardLength;
   };
+  pinMode(pinUp, OUTPUT);
+  pinMode(pinLeft, OUTPUT);
+  pinMode(pinRight, OUTPUT);
+  pinMode(pinDown, OUTPUT);
+  pinMode(pinPlay, OUTPUT);
   //  lcd.createChar(0, arrowLeft);
   //  lcd.createChar(1, arrowRight);
   lcd.begin(16, 2);
 }
 void loop()
 {
-  lcd.setCursor(0, 0);
+  Inputs();
 }
 void drawLCD()
 {
@@ -174,11 +186,11 @@ void drawLCD()
   lcd.print("Length:");
   lcd.print(Melody[currSelNote].length);
 }
-  void getInputs()
-{
 
+void Inputs()
+{
 }
-  void playMelody()
+void playMelody()
 {
   //  for (int i = 0; i < sizeof(melody); i++) {
   //  }
