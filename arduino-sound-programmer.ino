@@ -98,90 +98,86 @@ Note Notes[] = {
     {"D8", 4699},
     {"DS8", 4978}};
 
+const int melodyLength = 20;
+const int standardNote = 2;
+const int standardLength = 4;
 int currSelNote = 0;
 
-typedef struct{
+typedef struct
+{
   int note;
   int length;
 } melody;
 
-melody Melody[] = {
-    {2, 4},
-    {2, 4},
-    {2, 4},
-    {2, 4},
-    {2, 4},
-    {2, 4},
-    {2, 4},
-    {2, 4},
-    {2, 4}};
+melody Melody[]
 
-const uint8_t arrowLeft[] = {
-    0b01000,
-    0b01100,
-    0b01110,
-    0b01111,
-    0b01110,
-    0b01100,
-    0b01000,
-    0b00000,
-};
-
-const uint8_t arrowRight[] = {
-    0b01000,
-    0b01100,
-    0b01110,
-    0b01111,
-    0b01110,
-    0b01100,
-    0b01000,
-    0b00000,
-};
+//const byte arrowLeft[8] = {
+//  B01000,
+//  B01100,
+//  B01110,
+//  B01111,
+//  B01110,
+//  B01100,
+//  B01000,
+//  B00000,
+//};
+//
+//const byte arrowRight[8] = {
+//  B01000,
+//  B01100,
+//  B01110,
+//  B01111,
+//  B01110,
+//  B01100,
+//  B01000,
+//  B00000,
+//};
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 void setup()
 {
+  for (int i = 0; i <= melodyLength; i++) {
+  Melody[i].note = standardNote;
+  Melody[i].length = standardLength;
+  };
+  //  lcd.createChar(0, arrowLeft);
+  //  lcd.createChar(1, arrowRight);
   lcd.begin(16, 2);
-  //  lcd.createChar(1, arrowLeft);
-  //  lcd.createChar(2, arrowRight);
 }
-
 void loop()
 {
   lcd.setCursor(0, 0);
 }
-
 void drawLCD()
 {
-  lcd.setCursor(0, 0);
-  lcd.print((char)0x01);
-  lcd.setCursor(16, 0);
-  lcd.print((char)0x02);
-
   if (currSelNote != 0)
   {
-    lcd.setCursor(2, 0);
+    lcd.setCursor(0, 0);
+    //  lcd.write(byte(0));
+    lcd.print("<")
+        lcd.setCursor(2, 0);
     lcd.print(Notes[Melody[currSelNote - 1].note].name);
   }
-
   lcd.setCursor(6, 0);
   lcd.print(Notes[Melody[currSelNote].note].name);
-
   if (currSelNote != sizeof(Melody))
   {
-    lcd.setCursor(10, 0);
+    lcd.setCursor(16, 0);
+    //  lcd.write(byte(1));
+    lcd.print(">")
+        lcd.setCursor(10, 0);
     lcd.print(Notes[Melody[currSelNote + 1].note].name);
   }
+  lcd.setCursor(0, 1)
+      lcd.print("Length:")
+      lcd.print(Melody[currSelNote].length)
 }
-
 void getInputs()
 {
 }
-
 void playMelody()
 {
   //  for (int i = 0; i < sizeof(melody); i++) {
-
   //  }
 }
