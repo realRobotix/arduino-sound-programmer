@@ -1,12 +1,12 @@
 #include <LiquidCrystal.h>
-#include <notes.h>
+#include "notes.h"
 
 typedef struct{
   char name[3];
   int pitch;
 } Note;
 
-Note Notes[]={
+Note Notes[] = {
   {"B0",  31},
   {"C1",  33},
   {"CS1", 35},
@@ -103,7 +103,19 @@ int currSelNote = 0
 typedef struct {
   int note[];
   int length[];
-} melody;
+} Melody;
+
+Melody Melody[] = {
+  {2, 4},
+  {2, 4},
+  {2, 4},
+  {2, 4},
+  {2, 4},
+  {2, 4},  
+  {2, 4},
+  {2, 4},
+  {2, 4}
+}
 
 const uint8_t arrowLeft[] = {
   0b01000,
@@ -141,16 +153,23 @@ void loop() {
 
 
 void drawLCD() {
-  lcd.setCursor(0, 0)
-  lcd.print((char) 0x01)
-  lcd.setCursor(16, 0)
-  lcd.print((char) 0x02)
-  lcd.setCursor(2, 0)
-  lcd.print(Notes[Melody[currSelNote - 1].note].name)
-  lcd.setCursor(6, 0)
-  lcd.print(Notes[Melody[currSelNote].note].name)
-  lcd.setCursor(10, 0)
-  lcd.print(Notes[Melody[currSelNote + 1].note].name)
+  lcd.setCursor(0, 0);
+  lcd.print((char) 0x01);
+  lcd.setCursor(16, 0);
+  lcd.print((char) 0x02);
+
+  if (currSelNote != 0) {
+    lcd.setCursor(2, 0);
+    lcd.print(Notes[Melody[currSelNote - 1].note].name);
+  }
+
+  lcd.setCursor(6, 0);
+  lcd.print(Notes[Melody[currSelNote].note].name);
+
+  if (currSelNote != sizeof(Melody)) {
+    lcd.setCursor(10, 0);
+    lcd.print(Notes[Melody[currSelNote + 1].note].name);
+  }
 }
 
 void getInputs() {
