@@ -109,7 +109,7 @@ typedef struct
   int length;
 } melody;
 
-melody Melody[]
+melody Melody[melodyLength];
 
 //const byte arrowLeft[8] = {
 //  B01000,
@@ -135,11 +135,12 @@ melody Melody[]
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
-void setup()
+ void setup()
 {
-  for (int i = 0; i <= melodyLength; i++) {
-  Melody[i].note = standardNote;
-  Melody[i].length = standardLength;
+  for (int i = 0; i < melodyLength; i++)
+  {
+    Melody[i].note = standardNote;
+    Melody[i].length = standardLength;
   };
   //  lcd.createChar(0, arrowLeft);
   //  lcd.createChar(1, arrowRight);
@@ -155,8 +156,8 @@ void drawLCD()
   {
     lcd.setCursor(0, 0);
     //  lcd.write(byte(0));
-    lcd.print("<")
-        lcd.setCursor(2, 0);
+    lcd.print("<");
+    lcd.setCursor(2, 0);
     lcd.print(Notes[Melody[currSelNote - 1].note].name);
   }
   lcd.setCursor(6, 0);
@@ -165,18 +166,19 @@ void drawLCD()
   {
     lcd.setCursor(16, 0);
     //  lcd.write(byte(1));
-    lcd.print(">")
-        lcd.setCursor(10, 0);
+    lcd.print(">");
+    lcd.setCursor(10, 0);
     lcd.print(Notes[Melody[currSelNote + 1].note].name);
   }
-  lcd.setCursor(0, 1)
-      lcd.print("Length:")
-      lcd.print(Melody[currSelNote].length)
+  lcd.setCursor(0, 1);
+  lcd.print("Length:");
+  lcd.print(Melody[currSelNote].length);
 }
-void getInputs()
+  void getInputs()
 {
+
 }
-void playMelody()
+  void playMelody()
 {
   //  for (int i = 0; i < sizeof(melody); i++) {
   //  }
