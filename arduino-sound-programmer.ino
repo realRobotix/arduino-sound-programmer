@@ -116,8 +116,8 @@ typedef struct
 } melody;
 
 melody Melody[melodyLength];
-/*
-const byte arrowLeft[8] = {
+
+byte arrowLeft[8] = {
   B01000,
   B01100,
   B01110,
@@ -125,10 +125,10 @@ const byte arrowLeft[8] = {
   B01110,
   B01100,
   B01000,
-  B00000,
+  B00000
 };
 
-const byte arrowRight[8] = {
+byte arrowRight[8] = {
   B01000,
   B01100,
   B01110,
@@ -136,9 +136,9 @@ const byte arrowRight[8] = {
   B01110,
   B01100,
   B01000,
-  B00000,
+  B00000
 };
-*/
+
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 void setup()
@@ -149,26 +149,47 @@ void setup()
     Melody[i].note = standardNote;
     Melody[i].length = standardLength;
   };
-  pinMode(pinUp, OUTPUT);
-  pinMode(pinLeft, OUTPUT);
-  pinMode(pinRight, OUTPUT);
-  pinMode(pinDown, OUTPUT);
-  pinMode(pinPlay, OUTPUT);
-  //  lcd.createChar(0, arrowLeft);
-  //  lcd.createChar(1, arrowRight);
+  pinMode(pinUp, INPUT);
+  pinMode(pinLeft, INPUT);
+  pinMode(pinRight, INPUT);
+  pinMode(pinDown, INPUT);
+  pinMode(pinPlay, INPUT);
+  lcd.createChar(0, arrowLeft);
+  lcd.createChar(1, arrowRight);
   lcd.begin(16, 2);
 }
 void loop()
 {
-  Inputs();
+  while (true)
+  {
+    if (digitalRead(pinUp))
+    {
+      /* code */
+    }
+    else if (digitalRead(pinDown))
+    {
+      /* code */
+    }
+    else if (digitalRead(pinLeft))
+    {
+      /* code */
+    }
+    else if (digitalRead(pinRight))
+    {
+      /* code */
+    }
+    else if (digitalRead(pinPlay))
+      /* code */
+    {
+    } 
+  }
 }
 void drawLCD()
 {
   if (currSelNote != 0)
   {
     lcd.setCursor(0, 0);
-    //  lcd.write(byte(0));
-    lcd.print("<");
+    lcd.write(byte(0));
     lcd.setCursor(2, 0);
     lcd.print(Notes[Melody[currSelNote - 1].note].name);
   }
@@ -177,8 +198,7 @@ void drawLCD()
   if (currSelNote != sizeof(Melody))
   {
     lcd.setCursor(16, 0);
-    //  lcd.write(byte(1));
-    lcd.print(">");
+    lcd.write(byte(1));
     lcd.setCursor(10, 0);
     lcd.print(Notes[Melody[currSelNote + 1].note].name);
   }
@@ -187,9 +207,6 @@ void drawLCD()
   lcd.print(Melody[currSelNote].length);
 }
 
-void Inputs()
-{
-}
 void playMelody()
 {
   //  for (int i = 0; i < sizeof(melody); i++) {
