@@ -1,6 +1,7 @@
+#include <LiquidCrystal_I2C.h>
+
 #include <Wire.h>
-//#include <LiquidCrysral_I2C.h>
-#include <LiquidCrystal.h>
+//#include <LiquidCrystal.h>
 #include "notes.h"
 
 const int pinUp = 8;
@@ -45,8 +46,8 @@ byte arrowRight[8] = {
     B01000,
     B00000};
 
-//LiquidCrystal_I2C lcd(0x3F, 16, 2);
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal_I2C lcd(0x3F, 16, 2);
+//LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 void setup()
 {
