@@ -147,8 +147,12 @@ void drawLCD()
     lcd.print(Notes[Melody[selNote + 1].note].name);
   }
   lcd.setCursor(0, 1);
-  lcd.print("Length:");
+  lcd.print("L:");
   lcd.print(Melody[selNote].length);
+  lcd.setCursor(6, 1);
+  lcd.print(selNote);
+  lcd.print("/");
+  lcd.print(melodyLength);
 }
 
 void playMelody()
