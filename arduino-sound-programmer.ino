@@ -1,5 +1,5 @@
-#include <LiquidCrystal_I2C.h>
 #include <Wire.h>
+#include <LCD_I2C.h>
 //#include <LiquidCrystal.h>
 #include "notes.h"
 
@@ -26,14 +26,14 @@ typedef struct
 melody Melody[melodyLength];
 
 byte arrowLeft[8] = {
-    B01000,
-    B01100,
-    B01110,
-    B01111,
-    B01110,
-    B01100,
-    B01000,
-    B00000};
+  B00010,
+  B00110,
+  B01110,
+  B11110,
+  B01110,
+  B00110,
+  B00010,
+  B00000};
 
 byte arrowRight[8] = {
     B01000,
@@ -45,12 +45,14 @@ byte arrowRight[8] = {
     B01000,
     B00000};
 
-LiquidCrystal_I2C lcd(0x3F, 16, 2);
+LCD_I2C lcd(0x3F, 16, 2);
 //LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 void setup()
 {
-  Serial.begin(2000000);
+  lcd.begin();
+  lcd.backlight();
+  Serial.begin(250000);
   for (int i = 0; i < melodyLength; i++)
   {
     Melody[i].note = standardNote;
@@ -65,10 +67,10 @@ void setup()
   pinMode(pinPlay, INPUT);
   lcd.createChar(0, arrowLeft);
   lcd.createChar(1, arrowRight);
-  lcd.begin(16, 2);
 }
 void loop()
 {
+  drawLCD();
   while (true)
   {
     switch (getPressedButton())
@@ -147,8 +149,12 @@ void drawLCD()
     lcd.print(Notes[Melody[selNote + 1].note].name);
   }
   lcd.setCursor(0, 1);
-  lcd.print("Length:");
+  lcd.print("L:");
   lcd.print(Melody[selNote].length);
+  lcd.setCursor(6, 1);
+  lcd.print(selNote);
+  lcd.print("/");
+  lcd.print(melodyLength);
 }
 
 void playMelody()
