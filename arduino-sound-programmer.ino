@@ -3,17 +3,20 @@
 //#include <LiquidCrystal.h>
 #include "notes.h"
 
-const int pinUp = 8;
-const int pinLeft = 9;
-const int pinRight = 6;
-const int pinDown = 7;
-const int pinLengthUp = 1;
-const int pinLengthDown = 0;
-const int pinPlay = 10;
-const int melodyLength = 20;
-const int standardNote = 1;
-const int standardLength = 4;
-const int pauseBetweenNotes = 50;
+const static int pinUp PROGMEM = 4;
+const static int pinLeft PROGMEM = 8;
+const static int pinRight PROGMEM = 10;
+const static int pinDown PROGMEM = 12;
+const static int pinLengthUp PROGMEM = 11;
+const static int pinLengthDown PROGMEM = 9;
+const static int pinPlay PROGMEM = 6;
+const static int pinSpeaker PROGMEM = 2;
+const static int melodyLength PROGMEM = 20;
+const static int standardNote PROGMEM = 0;
+const static int standardLength PROGMEM = 4;
+const static int pauseBetweenNotes PROGMEM = 50;
+const static int BPM PROGMEM = 130;
+const static int debounceTime PROGMEM = 200;
 
 int selNote = 0;
 
@@ -23,17 +26,17 @@ typedef struct
   int length;
 } melody;
 
-melody Melody[melodyLength];
+melody Melody[melodyLength+1];
 
 byte arrowLeft[8] = {
-  B00010,
-  B00110,
-  B01110,
-  B11110,
-  B01110,
-  B00110,
-  B00010,
-  B00000};
+    B00010,
+    B00110,
+    B01110,
+    B11110,
+    B01110,
+    B00110,
+    B00010,
+    B00000};
 
 byte arrowRight[8] = {
     B01000,
@@ -53,6 +56,7 @@ void setup()
   lcd.begin();
   lcd.backlight();
   Serial.begin(250000);
+  Serial.println("heh");
   for (int i = 0; i < melodyLength; i++)
   {
     Melody[i].note = standardNote;
@@ -67,71 +71,63 @@ void setup()
   pinMode(pinPlay, INPUT);
   lcd.createChar(0, arrowLeft);
   lcd.createChar(1, arrowRight);
+  drawLCD();
 }
 void loop()
 {
-  drawLCD();
-  while (true)
+  if (digitalRead(pinUp) == HIGH)
   {
-    switch (getPressedButton())
+    Melody[selNote].note++;
+    drawLCD();
+    delay(debounceTime);
+  }
+  else if (digitalRead(pinDown) == HIGH)
+  {
+    Melody[selNote].note--;
+    drawLCD();
+    delay(debounceTime);
+  }
+  else if (digitalRead(pinLeft) == HIGH)
+  {
+    if (selNote > 0)
     {
-    case 0:
-      delay(100);
-      break;
-
-    case 1:
-      Melody[selNote].note++;
+      selNote--;
       drawLCD();
-      break;
-
-    case 2:
-      Melody[selNote].note--;
-      drawLCD();
-      break;
-
-    case 3:
-      if (selNote > 0)
-      {
-        selNote--;
-      }
-      drawLCD();
-      break;
-
-    case 4:
-      if (selNote < melodyLength)
-      {
-        selNote++;
-      }
-      drawLCD();
-      break;
-
-    case 5:
-      Melody[selNote].length++;
-      drawLCD();
-      break;
-
-    case 6:
-      Melody[selNote].length--;
-      drawLCD();
-      break;
-
-    case 7:
-      drawLCD();
-      playMelody();
-      break;
-
-    default:
-      delay(100);
-      break;
-    }
-    while (getPressedButton() != 0)
-    {
-      delay(100);
+      delay(debounceTime);
     }
   }
+  else if (digitalRead(pinRight) == HIGH)
+  {
+    if (selNote < melodyLength)
+    {
+      selNote = selNote + 1;
+      drawLCD();
+      delay(debounceTime);
+    }
+  }
+  else if (digitalRead(pinLengthUp) == HIGH)
+  {
+    Melody[selNote].length++;
+    drawLCD();
+    delay(debounceTime);
+  }
+  else if (digitalRead(pinLengthDown) == HIGH)
+  {
+    Melody[selNote].length--;
+    drawLCD();
+    delay(debounceTime);
+  }
+  else if (digitalRead(pinPlay) == HIGH)
+  {
+    playMelody();
+    drawLCD();
+    delay(debounceTime);
+  }
 }
+
 void drawLCD()
 {
+  lcd.noCursor();
   if (selNote != 0)
   {
     lcd.setCursor(0, 0);
@@ -139,28 +135,48 @@ void drawLCD()
     lcd.setCursor(2, 0);
     lcd.print(Notes[Melody[selNote - 1].note].name);
   }
+  else
+  {
+    lcd.setCursor(0, 0);
+    lcd.print(F("     "));
+  }
   lcd.setCursor(6, 0);
   lcd.print(Notes[Melody[selNote].note].name);
-  if (selNote != sizeof(Melody))
+  if (selNote != melodyLength)
   {
     lcd.setCursor(16, 0);
     lcd.write(byte(1));
     lcd.setCursor(10, 0);
     lcd.print(Notes[Melody[selNote + 1].note].name);
   }
+  else
+  {
+    lcd.setCursor(10, 0);
+    lcd.print(F("      "));
+  }
   lcd.setCursor(0, 1);
-  lcd.print("L:");
+  lcd.print(F("L:"));
   lcd.print(Melody[selNote].length);
   lcd.setCursor(6, 1);
   lcd.print(selNote);
-  lcd.print("/");
+  lcd.print(F("/"));
   lcd.print(melodyLength);
+  lcd.setCursor(7, 0);
+  lcd.cursor();
 }
 
 void playMelody()
 {
-  //  for (int i = 0; i < sizeof(melody); i++) {
-  //  }
+  for (int i = 0; i < melodyLength; i++)
+  {
+    selNote = i;
+    if (!Melody[selNote].note == 0)
+    {
+      delay(pauseBetweenNotes);
+      tone(pinSpeaker, Notes[Melody[selNote].note].pitch);
+      delay(Melody[selNote].length / (BPM / 60) * 1000); // TODO: find right algorithm
+    }
+  }
 }
 
 int getPressedButton()
