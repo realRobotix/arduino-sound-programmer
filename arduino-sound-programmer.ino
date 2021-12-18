@@ -54,15 +54,8 @@ LCD_I2C lcd(0x3F, 16, 2);
 
 void setup()
 {
-  lcd.begin();
-  lcd.backlight();
   Serial.begin(250000);
   Serial.println("Starting!");
-  for (int i = 0; i <= melodyLength; i++)
-  {
-    Melody[i].note = standardNote;
-    Melody[i].length = i;
-  };
   pinMode(pinUp, INPUT);
   pinMode(pinLeft, INPUT);
   pinMode(pinRight, INPUT);
@@ -70,6 +63,29 @@ void setup()
   pinMode(pinLengthUp, INPUT);
   pinMode(pinLengthDown, INPUT);
   pinMode(pinPlay, INPUT);
+  for (int i = 0; i <= melodyLength; i++)
+  {
+    Melody[i].note = standardNote;
+    Melody[i].length = standardLength;
+  };
+  if (digitalRead(pinLengthDown) == HIGH)
+  {
+    for (int i = 0; i <= 90; i++)
+    {
+      Melody[i].note = i;
+      Melody[i].length = standardLength;
+    };
+  }
+  if (digitalRead(pinDown) == HIGH)
+  {
+    for (int i = 0; i <= 90; i++)
+    {
+      Melody[i].note = i;
+      Melody[i].length = i;
+    };
+  }
+  lcd.begin();
+  lcd.backlight();
   lcd.createChar(0, arrowLeft);
   lcd.createChar(1, arrowRight);
   drawLCD();
@@ -122,7 +138,6 @@ void loop()
 
 void drawLCD()
 {
-  lcd.clear();
   if (selNote > 0)
   {
     lcd.setCursor(0, 0);
