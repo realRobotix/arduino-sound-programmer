@@ -94,7 +94,7 @@ typedef struct
     int pitch;
 } Note;
 
-extern const Note Notes[] = {
+extern const Note Notes[90] = {
     {"TBD", 0},
     {"B0 ", 31},
     {"C1 ", 33},
