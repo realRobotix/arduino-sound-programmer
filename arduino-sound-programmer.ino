@@ -157,7 +157,7 @@ void drawLCD()
   lcd.print(selNote);
   lcd.print(F("/"));
   lcd.print(melodyLength);
-  lcd.print(F(" "));
+  lcd.print(F("  "));
   lcd.setCursor(7, 0);
   lcd.cursor();
 }
