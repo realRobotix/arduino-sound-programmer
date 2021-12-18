@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <LCD_I2C.h>
-//#include <LiquidCrystal.h>
 #include "notes.h"
 
 const static int pinUp PROGMEM = 4;
@@ -11,13 +10,14 @@ const static int pinLengthUp PROGMEM = 11;
 const static int pinLengthDown PROGMEM = 9;
 const static int pinPlay PROGMEM = 6;
 const static int pinSpeaker PROGMEM = 2;
-const static int melodyLength PROGMEM = 20;
+const static int melodyLength PROGMEM = 100;
 const static int standardNote PROGMEM = 0;
 const static int standardLength PROGMEM = 4;
 const static int maxLength PROGMEM = 16;
 const static int pauseBetweenNotes PROGMEM = 50;
 const static int BPM PROGMEM = 130;
 const static int debounceTime PROGMEM = 200;
+const static int debounceTimeNote PROGMEM = 100;
 
 int selNote = 0;
 
@@ -57,7 +57,7 @@ void setup()
   lcd.begin();
   lcd.backlight();
   Serial.begin(250000);
-  Serial.println("heh");
+  Serial.println("Starting!");
   for (int i = 0; i <= melodyLength; i++)
   {
     Melody[i].note = standardNote;
@@ -80,13 +80,13 @@ void loop()
   {
     Melody[selNote].note++;
     drawLCD();
-    delay(debounceTime);
+    delay(debounceTimeNote);
   }
   else if (digitalRead(pinDown) == HIGH && Melody[selNote].note > 0)
   {
     Melody[selNote].note--;
     drawLCD();
-    delay(debounceTime);
+    delay(debounceTimeNote);
   }
   else if (digitalRead(pinLeft) == HIGH && selNote > 0)
   {
@@ -167,47 +167,14 @@ void playMelody()
   for (int i = 0; i <= melodyLength; i++)
   {
     selNote = i;
-    if (!Melody[selNote].note == 0)
+    if (Melody[selNote].note != 0)
     {
+      drawLCD();
       delay(pauseBetweenNotes);
       tone(pinSpeaker, Notes[Melody[selNote].note].pitch);
-      delay(Melody[selNote].length / (BPM / 60) * 1000); // TODO: find right algorithm
+      delay(((60.0 / BPM) / Melody[selNote].length) * 1000);
+      noTone(pinSpeaker);
     }
   }
-}
-
-int getPressedButton()
-{
-  if (digitalRead(pinUp) == HIGH)
-  {
-    return 1;
-  }
-  else if (digitalRead(pinDown) == HIGH)
-  {
-    return 2;
-  }
-  else if (digitalRead(pinLeft) == HIGH)
-  {
-    return 3;
-  }
-  else if (digitalRead(pinRight) == HIGH)
-  {
-    return 4;
-  }
-  else if (digitalRead(pinLengthUp) == HIGH)
-  {
-    return 5;
-  }
-  else if (digitalRead(pinLengthDown) == HIGH)
-  {
-    return 6;
-  }
-  else if (digitalRead(pinPlay) == HIGH)
-  {
-    return 7;
-  }
-  else
-  {
-    return 0;
-  }
+  selNote = 0;
 }
