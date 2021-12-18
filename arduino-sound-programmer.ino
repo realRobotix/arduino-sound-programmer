@@ -10,8 +10,8 @@ const static int pinLengthUp PROGMEM = 11;
 const static int pinLengthDown PROGMEM = 9;
 const static int pinPlay PROGMEM = 6;
 const static int pinSpeaker PROGMEM = 2;
-const static int melodyLength PROGMEM = 100;
-const static int standardNote PROGMEM = 0;
+const static int melodyLength PROGMEM = 200;
+const static int standardNote PROGMEM = 8;
 const static int standardLength PROGMEM = 4;
 const static int maxLength PROGMEM = 16;
 const static int pauseBetweenNotes PROGMEM = 50;
@@ -61,7 +61,7 @@ void setup()
   for (int i = 0; i <= melodyLength; i++)
   {
     Melody[i].note = standardNote;
-    Melody[i].length = standardLength;
+    Melody[i].length = i;
   };
   pinMode(pinUp, INPUT);
   pinMode(pinLeft, INPUT);
@@ -122,7 +122,7 @@ void loop()
 
 void drawLCD()
 {
-  lcd.noCursor();
+  lcd.clear();
   if (selNote > 0)
   {
     lcd.setCursor(0, 0);
@@ -153,13 +153,12 @@ void drawLCD()
   lcd.print(F("L:"));
   lcd.print(Melody[selNote].length);
   lcd.print(F(" "));
-  lcd.setCursor(6, 1);
+  lcd.setCursor(5, 1);
   lcd.print(selNote);
   lcd.print(F("/"));
   lcd.print(melodyLength);
   lcd.print(F("  "));
   lcd.setCursor(7, 0);
-  lcd.cursor();
 }
 
 void playMelody()
